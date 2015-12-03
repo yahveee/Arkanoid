@@ -21,8 +21,8 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 	int alto_misil = 20;
 	int ANCHO_NAVE = 100;
 
-	int velocidadX = 1;
-	int velocidadY = -1;
+	double velocidadX = 1;
+	double velocidadY = -1;
 	int puntos =0;
 	boolean gameOver = false;
 
@@ -76,6 +76,17 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 				casilla.setFillColor(aleatorio.nextColor());
 			}
 		}
+		for (int j=0; j<LADRILLOS_BASE; j++){
+			//desplazamiento = desplazamiento-ANCHO_LADRILLO/2;	
+			for (int i=0; i< LADRILLOS_BASE-j; i++){
+				GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
+				add (casilla,
+						ancho/2-basePiramide/2+ANCHO_LADRILLO*j/2 + ANCHO_LADRILLO*i,
+						ALTO_LADRILLO*j);
+				casilla.setFilled(true);
+				casilla.setFillColor(Color.orange);
+			}
+		}
 		for (int i=0; i<LADRILLOS_BASE; i++){
 			GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
 			add (casilla);
@@ -83,6 +94,14 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 								ALTO_LADRILLO*LADRILLOS_BASE);
 			casilla.setFilled(true);
 			casilla.setFillColor(Color.WHITE);
+		}
+		for (int i=0; i<LADRILLOS_BASE; i++){
+			GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
+			add (casilla);
+			casilla.setLocation(ancho/2-basePiramide/2+ANCHO_LADRILLO*i, 
+								ALTO_LADRILLO*LADRILLOS_BASE);
+			casilla.setFilled(true);
+			casilla.setFillColor(Color.gray);
 		}
 		for (int i=0; i<LADRILLOS_BASE; i++){
 			GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
@@ -152,17 +171,17 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 	// y false si no ha chocado.
 	private boolean chequeaCursor(){
 		if (getElementAt(misil.getX(), misil.getY()+alto_misil)==nave){
-			velocidadY = -velocidadY;	
+			velocidadY = -velocidadY -0.03;	
 		}
-		else if (getElementAt(misil.getX()+alto_misil, misil.getY()+alto_misil)==nave){
-			velocidadY = -velocidadY;	
-		}
-		else if (getElementAt(misil.getX(), misil.getY())==nave){
-			velocidadX = -velocidadX;	
-		}
-		else if (getElementAt(misil.getX()+alto_misil, misil.getY())==nave){
-			velocidadX = -velocidadX;	
-		}else {
+//		else if (getElementAt(misil.getX()+alto_misil, misil.getY()+alto_misil)==nave){
+//			velocidadY = -velocidadY;	
+//		}
+//		else if (getElementAt(misil.getX(), misil.getY())==nave){
+//			velocidadX = -velocidadX;	
+//		}
+//		else if (getElementAt(misil.getX()+alto_misil, misil.getY())==nave){
+//			velocidadX = -velocidadX;	
+		else {
 			return false;
 		} 
 		return true;
@@ -238,10 +257,5 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 		// devolvemos el valor de choque
 		return (choque);
 	}
-
-
-
-
-
 
 }
