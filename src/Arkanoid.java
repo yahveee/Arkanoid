@@ -2,6 +2,7 @@ import java.awt.Color;
 import java.awt.event.MouseEvent;
 
 import acm.graphics.GImage;
+import acm.graphics.GLabel;
 import acm.graphics.GObject;
 import acm.graphics.GOval;
 import acm.graphics.GRect;
@@ -15,45 +16,47 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 	GImage fondo;
 	GImage fondoFinal;
 	GRect ladrillo2;
-	
+	GLabel puntuacion;
+
 	int alto_misil = 20;
 	int ANCHO_NAVE = 100;
-	
-    int velocidadX = 1;
-    int velocidadY = -1;
 
-    boolean gameOver = false;
-    
+	int velocidadX = 1;
+	int velocidadY = -1;
+	int puntos =0;
+	boolean gameOver = false;
+
 	private static final int ANCHO_LADRILLO = 36;
-	private static final int ALTO_LADRILLO = 15;
-	private static final int ANCHO_PANTALLA = 600;
-	private static final int ALTO_PANTALLA = 800;
-	private static final int LADRILLOS_BASE = 14;
+	private static final int ALTO_LADRILLO = 19;
+	private static final int ANCHO_PANTALLA = 750;
+	private static final int ALTO_PANTALLA = 1000;
+	private static final int LADRILLOS_BASE = 18;
 
 	public void init(){
+		setSize(ANCHO_PANTALLA,ALTO_PANTALLA);
 		
-		addMouseListeners();
-		
+	
 		fondo = new GImage("universo.gif");
-		fondo.setSize(ANCHO_PANTALLA,ALTO_PANTALLA);
 		add(fondo);
 		
+		puntuacion = new GLabel ("PUNTUACION: " + puntos);
+		puntuacion.setVisible(true);
+		puntuacion.setColor(Color.white);
+		puntuacion.setLocation(ANCHO_PANTALLA/2-puntuacion.getWidth()/2, ALTO_PANTALLA-100);
+		add(puntuacion);
+		
 		misil = new GImage("ball.png");
-		add(misil,getWidth()/2,getHeight()-120);
+		add(misil,getWidth()/2, getHeight()-160);
 		misil.setSize(20,20);
-
-		setSize(ANCHO_PANTALLA,ALTO_PANTALLA);
 
 		pintaPiramide();
 
 		nave = new GImage("barra.png");
-		add(nave,getWidth()/2,getHeight()-60);
+		add(nave,getWidth()/2,getHeight()-100);
 		nave.setSize(100,25);
 
-		fondoFinal = new GImage("gameover.png");
-		fondoFinal.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
-		
-		
+		addMouseListeners();
+
 
 	}
 
@@ -72,18 +75,34 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 				casilla.setFilled(true);
 				casilla.setFillColor(aleatorio.nextColor());
 			}
-
 		}
-
+		for (int i=0; i<LADRILLOS_BASE; i++){
+			GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
+			add (casilla);
+			casilla.setLocation(ancho/2-basePiramide/2+ANCHO_LADRILLO*i, 
+								ALTO_LADRILLO*LADRILLOS_BASE);
+			casilla.setFilled(true);
+			casilla.setFillColor(Color.WHITE);
+		}
+		for (int i=0; i<LADRILLOS_BASE; i++){
+			GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
+			add (casilla);
+			casilla.setLocation(ancho/2-basePiramide/2+ANCHO_LADRILLO*i, 
+								ALTO_LADRILLO*LADRILLOS_BASE);
+			casilla.setFilled(true);
+			casilla.setFillColor(Color.orange);
+		}
 	}
 
-	public void run(){
 
+	public void run(){
+		waitForClick();
 		while(!gameOver){
+			
 			misil.move(velocidadX, velocidadY);
 			chequeaColision();
 			pause(2);
-			
+
 		}
 	}
 
@@ -116,6 +135,15 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 			velocidadX = -velocidadX;
 			auxiliar = false;
 		}
+		if(misil.getY() > nave.getY()+40){
+			velocidadX=0;
+			velocidadY=0;
+			auxiliar=false;
+			fondoFinal = new GImage("gameover.png");
+			fondoFinal.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
+			add(fondoFinal);
+			pause(2000);
+		}
 		return auxiliar;
 	}
 
@@ -144,20 +172,20 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 	//mueve el cursor siguiendo la posición del ratón
 	public void mouseMoved (MouseEvent evento){
 		if( ((evento.getX()+ANCHO_NAVE) <= getWidth()) ){
-			nave.setLocation(evento.getX(),getHeight()-60);
+			nave.setLocation(evento.getX(),getHeight()-100);
 		}
 	}
-//	public void mouseMoved (MouseEvent evento){
-//		if( ((evento.getX()) <= 1000 )){
-//			nave.setLocation(evento.getX(),600);
-//		}
-//	}
+	//	public void mouseMoved (MouseEvent evento){
+	//		if( ((evento.getX()) <= 1000 )){
+	//			nave.setLocation(evento.getX(),600);
+	//		}
+	//	}
 
 	/*
 	 * chequeaLadrillos comprueba chequeaPosicion con las coordenadas de la
 	 * pelota 
 	 */
-	
+
 	private void chequeaLadrillos() {
 
 		int misilX = (int) misil.getX();
@@ -185,7 +213,7 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 	 * coordenadas.
 	 * 
 	 */
-	
+
 	private boolean chequeaPosicion(int posX, int posY, char direccion) {
 
 		GObject auxiliar;
@@ -193,7 +221,7 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 		auxiliar = getElementAt(posX, posY);
 
 		// Chequeamos los ladrillos
-		if ((auxiliar != nave) && (auxiliar != null) &&(auxiliar != fondo) && (auxiliar != misil)) {
+		if ((auxiliar != nave) && (auxiliar != fondo) && (auxiliar != misil)) {
 			remove(auxiliar);
 			if (direccion == 'y') {
 				velocidadY = -velocidadY;
@@ -202,16 +230,18 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 			}
 			//puntuacion++;// aumentamos la puntuacion en uno
 			choque = true;
+			puntos+=10;
+			puntuacion.setLabel("PUNTUACION: "+puntos);
 		}
 
 
 		// devolvemos el valor de choque
 		return (choque);
 	}
-	
-	
-	
-	
-		
-	
+
+
+
+
+
+
 }
