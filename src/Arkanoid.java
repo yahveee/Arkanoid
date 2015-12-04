@@ -1,10 +1,11 @@
+// Esta clase ejecuta una ....
+
 import java.awt.Color;
 import java.awt.event.MouseEvent;
 
 import acm.graphics.GImage;
 import acm.graphics.GLabel;
 import acm.graphics.GObject;
-import acm.graphics.GOval;
 import acm.graphics.GRect;
 import acm.util.RandomGenerator;
 
@@ -17,6 +18,7 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 	GImage fondoFinal;
 	GRect ladrillo2;
 	GLabel puntuacion;
+	
 
 	int alto_misil = 20;
 	int ANCHO_NAVE = 100;
@@ -26,26 +28,25 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 	int puntos =0;
 	boolean gameOver = false;
 
-	private static final int ANCHO_LADRILLO = 36;
-	private static final int ALTO_LADRILLO = 19;
+	private static final int ANCHO_LADRILLO = 72;
+	private static final int ALTO_LADRILLO = 38;
 	private static final int ANCHO_PANTALLA = 750;
 	private static final int ALTO_PANTALLA = 1000;
-	private static final int LADRILLOS_BASE = 18;
+	private static final int LADRILLOS_BASE = 9;
 
 	public void init(){
-		setSize(ANCHO_PANTALLA,ALTO_PANTALLA);
 		
-	
+		setSize(ANCHO_PANTALLA,ALTO_PANTALLA);
 		fondo = new GImage("universo.gif");
 		add(fondo);
 		
 		puntuacion = new GLabel ("PUNTUACION: " + puntos);
 		puntuacion.setVisible(true);
-		puntuacion.setColor(Color.white);
+		puntuacion.setColor(Color.cyan );
 		puntuacion.setLocation(ANCHO_PANTALLA/2-puntuacion.getWidth()/2, ALTO_PANTALLA-100);
 		add(puntuacion);
 		
-		misil = new GImage("ball.png");
+		misil = new GImage("ball5.png");
 		add(misil,getWidth()/2, getHeight()-160);
 		misil.setSize(20,20);
 
@@ -57,16 +58,14 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 
 		addMouseListeners();
 
-
 	}
 
 	private void pintaPiramide(){
-		int alto = getHeight();
 		int ancho = getWidth();
 		int basePiramide = LADRILLOS_BASE * ANCHO_LADRILLO;
 		RandomGenerator aleatorio = new RandomGenerator();
 		for (int j=0; j<LADRILLOS_BASE; j++){
-			//desplazamiento = desplazamiento-ANCHO_LADRILLO/2;	
+		
 			for (int i=0; i< LADRILLOS_BASE-j; i++){
 				GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
 				add (casilla,
@@ -77,7 +76,7 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 			}
 		}
 		for (int j=0; j<LADRILLOS_BASE; j++){
-			//desplazamiento = desplazamiento-ANCHO_LADRILLO/2;	
+
 			for (int i=0; i< LADRILLOS_BASE-j; i++){
 				GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
 				add (casilla,
@@ -87,6 +86,7 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 				casilla.setFillColor(Color.orange);
 			}
 		}
+		
 		for (int i=0; i<LADRILLOS_BASE; i++){
 			GRect casilla = new GRect(ANCHO_LADRILLO,ALTO_LADRILLO);
 			add (casilla);
@@ -111,18 +111,18 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 			casilla.setFilled(true);
 			casilla.setFillColor(Color.orange);
 		}
+		
 	}
-
 
 	public void run(){
 		waitForClick();
 		while(!gameOver){
-			
 			misil.move(velocidadX, velocidadY);
 			chequeaColision();
 			pause(2);
-
+			
 		}
+		
 	}
 
 	private void chequeaColision(){
@@ -162,26 +162,28 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 			fondoFinal.setSize(ANCHO_PANTALLA, ALTO_PANTALLA);
 			add(fondoFinal);
 			pause(2000);
+			exit();
+			
 		}
 		return auxiliar;
 	}
 
 
-	//chequeaCursor devolverá true si ha chocado el cursor con la pelota
-	// y false si no ha chocado.
+	//chequeaCursor devolverá true si ha chocado el cursor con la pelota y false si no ha chocado.
+	
 	private boolean chequeaCursor(){
 		if (getElementAt(misil.getX(), misil.getY()+alto_misil)==nave){
-			velocidadY = -velocidadY -0.03;	
+			velocidadY = -velocidadY -0.02;	
 		}
-//		else if (getElementAt(misil.getX()+alto_misil, misil.getY()+alto_misil)==nave){
-//			velocidadY = -velocidadY;	
-//		}
-//		else if (getElementAt(misil.getX(), misil.getY())==nave){
-//			velocidadX = -velocidadX;	
-//		}
-//		else if (getElementAt(misil.getX()+alto_misil, misil.getY())==nave){
-//			velocidadX = -velocidadX;	
-		else {
+		else if (getElementAt(misil.getX()+alto_misil, misil.getY()+alto_misil)==nave){
+			velocidadY = -velocidadY;	
+		}
+		else if (getElementAt(misil.getX(), misil.getY())==nave){
+			velocidadX = -velocidadX;	
+		}
+		else if (getElementAt(misil.getX()+alto_misil, misil.getY())==nave){
+			velocidadX = -velocidadX;	
+		}else {
 			return false;
 		} 
 		return true;
@@ -194,34 +196,38 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 			nave.setLocation(evento.getX(),getHeight()-100);
 		}
 	}
-	//	public void mouseMoved (MouseEvent evento){
-	//		if( ((evento.getX()) <= 1000 )){
-	//			nave.setLocation(evento.getX(),600);
-	//		}
-	//	}
-
-	/*
-	 * chequeaLadrillos comprueba chequeaPosicion con las coordenadas de la
-	 * pelota 
-	 */
+	
 
 	private void chequeaLadrillos() {
 
 		int misilX = (int) misil.getX();
 		int misilY = (int) misil.getY();
 		int lado = alto_misil;
-
+		
 		// si chequea posicion devuelve false sigue mirando el resto de puntos
 		//de la pelota
 
-		if( !chequeaPosicion(misilX, misilY,'y')){
-			if( !chequeaPosicion(misilX+lado, misilY-1,'y')){
-				if( !chequeaPosicion(misilX-1, misilY+lado,'x')){
-					if( !chequeaPosicion(misilX+lado, misilY+lado,'y')){
-					}
-				}
-			}
-		}
+//		if( !chequeaPosicion(misilX, misilY,'y')){
+//			if( !chequeaPosicion(misilX+lado, misilY+1,'y')){
+//				if( !chequeaPosicion(misilX-1, misilY+lado,'x')){
+//					if( !chequeaPosicion(misilX+lado, misilY+lado,'y')){
+		//mitad superior 
+						if( !chequeaPosicion(misilX+lado/2, misilY+1,'y')){
+							//mitad izq
+							if( !chequeaPosicion(misilX-1, misilY+lado/2,'x')){
+								//mitaba inferior
+								if( !chequeaPosicion(misilX+lado/2, misilY+lado+1,'y')){
+									//mitad derecha
+									if( !chequeaPosicion(misilX+lado+1, misilY+lado/2,'x')){
+										
+									}
+								}
+							}
+						}
+//					}
+//				}
+//			}
+//		}
 	}
 
 
@@ -240,6 +246,7 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 		auxiliar = getElementAt(posX, posY);
 
 		// Chequeamos los ladrillos
+		
 		if ((auxiliar != nave) && (auxiliar != fondo) && (auxiliar != misil)) {
 			remove(auxiliar);
 			if (direccion == 'y') {
@@ -247,12 +254,12 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 			} else {
 				velocidadX = -velocidadX;
 			}
-			//puntuacion++;// aumentamos la puntuacion en uno
+			
+			// Aumentamos la puntuacion en 10 puntos cada vez que se destruye un ladrillo.
 			choque = true;
 			puntos+=10;
 			puntuacion.setLabel("PUNTUACION: "+puntos);
 		}
-
 
 		// devolvemos el valor de choque
 		return (choque);
