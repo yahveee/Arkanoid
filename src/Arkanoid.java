@@ -197,7 +197,6 @@ public class Arkanoid extends acm.program.GraphicsProgram {
 		}
 	}
 	
-
 	private void chequeaLadrillos() {
 
 		int misilX = (int) misil.getX();
